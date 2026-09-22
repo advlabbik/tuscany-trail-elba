@@ -405,7 +405,18 @@ footer a{color:var(--grigio)}
     if(!email.value.trim()||!email.checkValidity()){say(s.email);email.focus();return}
     if(!consent.checked){say(s.consent);consent.focus();return}
     btn.disabled=true;say(s.sending);
-    var tok=form.querySelector('[name="cf-turnstile-response"]');
+    /* Turnstile impiega qualche secondo a generare il token: chi compila con
+       l'autocompletamento può premere prima che sia pronto. Si aspetta, invece
+       di inviare un token vuoto che il worker rifiuterebbe. */
+    var attesa=0;
+    (function pronto(){
+      var tok=form.querySelector('[name="cf-turnstile-response"]');
+      if((!tok||!tok.value)&&attesa<10000){attesa+=250;return setTimeout(pronto,250)}
+      invia(tok);
+    })();
+  });
+  function invia(tok){
+    var l=lang(),s=T[l];
     fetch(form.dataset.endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({
       email:email.value.trim(),consent:true,lang:l,source:'elba',
       website:form.querySelector('input[name=website]').value,
@@ -421,7 +432,7 @@ footer a{color:var(--grigio)}
       /* Il token Turnstile vale una volta sola: senza reset il secondo tentativo verrebbe rifiutato. */
       var w=form.querySelector('.cf-turnstile');if(w&&window.turnstile)window.turnstile.reset(w);
     });
-  });
+  }
 })();
 </script>
 </body>
