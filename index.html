@@ -16,9 +16,10 @@
 <meta name="twitter:card" content="summary_large_image">
 <meta property="og:type" content="website">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><circle cx='50' cy='50' r='46' fill='%23a80030'/></svg>">
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-9CFZLTETEL"></script>
-<script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments)}gtag('js',new Date());gtag('config','G-9CFZLTETEL');</script>
-<!-- Meta Pixel dell'account «Bike soul» (act=369336313) qui, serve per il retargeting a novembre. -->
+<!-- Tracciamento: niente script qui. Il sottodominio è nella zona Cloudflare
+     tuscanytrail.it e Zaraz lo inietta da sé: GA4 G-9CFZLTETEL, Facebook Pixel
+     Tuscany 770084600740075 e Pixel BAS 725638932966514 (i pixel via CAPI, dal
+     server). Un gtag qui contava ogni visita due volte in GA4. -->
 <style>
 :root{--rosso:#a80030;--carta:#f6f1e7;--carta-scura:#ece4d3;--inchiostro:#2b2622;--grigio:#6b625a;--riga:rgba(43,38,34,.14)}
 *{box-sizing:border-box}
@@ -425,7 +426,8 @@ footer a{color:var(--grigio)}
       if(!res.ok)throw new Error(res.status);
       say(s.ok);
       form.querySelectorAll('input,button').forEach(function(x){x.disabled=true});
-      try{gtag('event','generate_lead',{source:'elba',lang:l})}catch(_){}
+      /* `Lead` esatto: evento standard Meta. Il trigger AllTracks di Zaraz lo
+         gira a GA4 e a tutti e due i pixel. */
       try{if(window.zaraz)zaraz.track('Lead',{source:'elba',lang:l})}catch(_){}
     }).catch(function(){
       say(s.err);btn.disabled=false;
